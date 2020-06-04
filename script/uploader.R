@@ -1,24 +1,28 @@
 # 市況情報を取得してspreadsheetにアップロードする
 library(agrimktlogger)
-library(googlesheets)
+library(googlesheets4)
 library(dplyr)
+library(lubridate)
 
-d <- get_shikyo_all()
+d <- get_shikyo_all() %>%
+  mutate(updated_at = force_tz(updated_at, "Etc/UTC"))
 
-gs_auth()
+gs4_auth(path = "credentials.json")
 
-gs_read(
-  gs_key(Sys.getenv("GSHEET_ID"))
+read_sheet(
+  Sys.getenv("GSHEET_ID"),
+  sheet = "最終更新日",
+  col_names = FALSE
 ) %>%
-  tail(1) %>%
-  pull(updated_at) -> last_updated
+  pull() %>%
+  as.character() ->
+  last_updated
 
-update_time <- as.character(d$updated_at)[1]
-
-if(update_time != last_updated){
-  gs_add_row(
-    gs_key(Sys.getenv("GSHEET_ID")),
-    input = d
+if(last_updated != as.character(d$updated_at[1])){
+  sheet_append(
+    Sys.getenv("GSHEET_ID"),
+    data = d,
+    sheet = "data"
   )
   cat("update success!\n")
 } else {
