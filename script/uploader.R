@@ -12,10 +12,10 @@ gs4_auth(path = "credentials.json")
 read_sheet(
   Sys.getenv("GSHEET_ID"),
   sheet = "最終更新日",
-  col_names = FALSE
+  col_names = FALSE,
+  col_types = "c"
 ) %>%
-  pull() %>%
-  as.character() ->
+  pull() ->
   last_updated
 
 if(last_updated != as.character(d$updated_at[1])){
