@@ -7,7 +7,7 @@ library(lubridate)
 d <- get_shikyo_all() %>%
   mutate(updated_at = force_tz(updated_at, "Etc/UTC"))
 
-gs4_auth(path = "/home/pi/agrimktlogger/script/credentials.json")
+gs4_auth(path = "credentials.json")
 
 read_sheet(
   Sys.getenv("GSHEET_ID"),
