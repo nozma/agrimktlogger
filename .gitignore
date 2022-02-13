@@ -4,4 +4,4 @@
 .Ruserdata
 .Renviron
 .httr-oauth
-script/credentials.json
+script/credentials*
